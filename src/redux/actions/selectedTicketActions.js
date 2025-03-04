@@ -1,5 +1,4 @@
-// src/redux/actions/selectedTicketActions.js
-export const SET_SELECTED_TICKET = "SET_SELECTED_TICKET";
+import { SET_SELECTED_TICKET } from "../actionTypes";
 
 export const setSelectedTicket = (ticket) => ({
   type: SET_SELECTED_TICKET,

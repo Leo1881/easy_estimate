@@ -9,9 +9,10 @@ import {
   CircularProgress,
   Alert,
   Snackbar,
+  ThemeProvider,
 } from "@mui/material";
 import backgroundImage from "../assets/images/background1.jpg";
-
+import theme from "../themes/theme";
 const InvitePage = () => {
   const { roomName, creatorName } = useParams();
   const [userName, setUserName] = useState("");
@@ -53,116 +54,107 @@ const InvitePage = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-        width: "100vw",
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        position: "relative",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.3)",
-          zIndex: 1,
-        },
-      }}
-    >
-      <Card
+    <ThemeProvider theme={theme}>
+      <Box
         sx={{
-          padding: 4,
-          maxWidth: "500px",
-          width: "90%",
-          zIndex: 2,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 2,
-          boxShadow: 3,
+          justifyContent: "center",
+          minHeight: "100vh",
+          width: "100vw",
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          position: "relative",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            zIndex: 1,
+          },
         }}
       >
-        <Typography
-          variant="h5"
-          gutterBottom
+        <Card
           sx={{
-            color: "primary.main",
-            textAlign: "center",
-            fontWeight: 500,
+            padding: 4,
+            maxWidth: "500px",
+            width: "90%",
+            zIndex: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+            boxShadow: 3,
           }}
         >
-          Welcome to Planning Poker!
-        </Typography>
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{
+              color: "primary.main",
+              textAlign: "center",
+              mb: 2,
+            }}
+          >
+            You have been invited to join the "{roomName}" room by {creatorName}
+            .
+          </Typography>
 
-        <Typography
-          variant="body1"
-          gutterBottom
-          sx={{
-            color: "text.secondary",
-            textAlign: "center",
-            mb: 2,
-          }}
-        >
-          You have been invited to join the "{roomName}" room by {creatorName}.
-        </Typography>
+          <TextField
+            label="Enter your name"
+            variant="outlined"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            onKeyPress={handleKeyPress}
+            margin="normal"
+            required
+            fullWidth
+            error={!!error}
+            helperText={error}
+            disabled={loading}
+            sx={{ mb: 2 }}
+          />
 
-        <TextField
-          label="Enter your name"
-          variant="outlined"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-          onKeyPress={handleKeyPress}
-          margin="normal"
-          required
-          fullWidth
-          error={!!error}
-          helperText={error}
-          disabled={loading}
-          sx={{ mb: 2 }}
-        />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleJoinRoom}
+            disabled={loading}
+            fullWidth
+            sx={{
+              height: "56px",
+              position: "relative",
+            }}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Join Room"
+            )}
+          </Button>
+        </Card>
 
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleJoinRoom}
-          disabled={loading}
-          fullWidth
-          sx={{
-            height: "56px",
-            position: "relative",
-          }}
-        >
-          {loading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            "Join Room"
-          )}
-        </Button>
-      </Card>
-
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={() => setError("")}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
+        <Snackbar
+          open={!!error}
+          autoHideDuration={6000}
           onClose={() => setError("")}
-          severity="error"
-          sx={{ width: "100%" }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          {error}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <Alert
+            onClose={() => setError("")}
+            severity="error"
+            sx={{ width: "100%" }}
+          >
+            {error}
+          </Alert>
+        </Snackbar>
+      </Box>
+    </ThemeProvider>
   );
 };
 

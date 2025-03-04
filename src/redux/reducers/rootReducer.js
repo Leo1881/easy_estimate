@@ -12,7 +12,7 @@ const placeholderReducer = (state = initialState, action) => {
 
 const rootReducer = combineReducers({
   placeholder: placeholderReducer,
-  selectedTicket: selectedTicketReducer, // Add other reducers here
+  selectedTicket: selectedTicketReducer,
 });
 
 export default rootReducer;

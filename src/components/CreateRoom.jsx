@@ -11,9 +11,11 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  ThemeProvider,
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import backgroundImage from "../assets/images/background1.jpg";
+import theme from "../themes/theme";
 
 const CreateRoom = () => {
   const [estimation, setEstimation] = useState("");
@@ -66,7 +68,7 @@ const CreateRoom = () => {
       // Initialize new room with only the admin
       const initialUsers = [
         {
-          name: `${showRunner} - Admin`, // Add the Admin suffix here
+          name: `${showRunner} - Admin`,
           isAdmin: true,
         },
       ];
@@ -109,180 +111,182 @@ const CreateRoom = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        width: "100vw",
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        position: "relative",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.3)",
-          zIndex: 1,
-        },
-      }}
-    >
+    <ThemeProvider theme={theme}>
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
+          justifyContent: "center",
           alignItems: "center",
-          width: "100%",
-          maxWidth: "500px",
-          padding: 4,
-          backgroundColor: "background.paper",
-          borderRadius: "8px",
-          boxShadow: 3,
-          zIndex: 2,
+          minHeight: "100vh",
+          width: "100vw",
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          position: "relative",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            zIndex: 1,
+          },
         }}
       >
-        <Typography
-          variant="h5"
-          sx={{ marginBottom: 2, color: "primary.main" }}
-        >
-          Create Your Room
-        </Typography>
-
-        <TextField
-          label="Who's running the show?"
-          variant="outlined"
-          value={showRunner}
-          onChange={(e) => setShowRunner(e.target.value)}
-          fullWidth
-          margin="normal"
-          required
-          error={!!errors.showRunner}
-          helperText={errors.showRunner}
-        />
-
-        <FormControl
-          fullWidth
-          margin="normal"
-          variant="outlined"
-          error={!!errors.estimation}
-        >
-          <InputLabel id="estimation-label">Estimation Method</InputLabel>
-          <Select
-            labelId="estimation-label"
-            value={estimation}
-            onChange={(e) => setEstimation(e.target.value)}
-            label="Estimation Method"
-          >
-            <MenuItem value="fibonacci">
-              Fibonacci (1, 2, 3, 5, 8, 13, 21)
-            </MenuItem>
-            <MenuItem value="tshirt">T-shirt (XS, S, M, L, XL)</MenuItem>
-          </Select>
-          {errors.estimation && (
-            <Typography color="error" variant="caption" sx={{ mt: 1 }}>
-              {errors.estimation}
-            </Typography>
-          )}
-        </FormControl>
-
-        <TextField
-          label="What's your room name?"
-          variant="outlined"
-          value={roomName}
-          onChange={(e) => setRoomName(e.target.value)}
-          fullWidth
-          margin="normal"
-          required
-          error={!!errors.roomName}
-          helperText={errors.roomName}
-        />
-
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={loading}
-          onClick={handleCreateRoom}
-          fullWidth
+        <Box
           sx={{
-            mt: 2,
-            height: "56px",
-            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+            maxWidth: "500px",
+            padding: 4,
+            backgroundColor: "background.paper",
+            borderRadius: "8px",
+            boxShadow: 3,
+            zIndex: 2,
           }}
         >
-          {loading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            "SAVE AND CREATE"
-          )}
-        </Button>
+          <Typography
+            variant="h5"
+            sx={{ marginBottom: 2, color: "primary.main" }}
+          >
+            Create Your Room
+          </Typography>
 
-        {roomUrl && (
-          <Box
+          <TextField
+            label="Who's running the show?"
+            variant="outlined"
+            value={showRunner}
+            onChange={(e) => setShowRunner(e.target.value)}
+            fullWidth
+            margin="normal"
+            required
+            error={!!errors.showRunner}
+            helperText={errors.showRunner}
+          />
+
+          <FormControl
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            error={!!errors.estimation}
+          >
+            <InputLabel id="estimation-label">Estimation Method</InputLabel>
+            <Select
+              labelId="estimation-label"
+              value={estimation}
+              onChange={(e) => setEstimation(e.target.value)}
+              label="Estimation Method"
+            >
+              <MenuItem value="fibonacci">
+                Fibonacci (1, 2, 3, 5, 8, 13, 21)
+              </MenuItem>
+              <MenuItem value="tshirt">T-shirt (XS, S, M, L, XL)</MenuItem>
+            </Select>
+            {errors.estimation && (
+              <Typography color="error" variant="caption" sx={{ mt: 1 }}>
+                {errors.estimation}
+              </Typography>
+            )}
+          </FormControl>
+
+          <TextField
+            label="What's your room name?"
+            variant="outlined"
+            value={roomName}
+            onChange={(e) => setRoomName(e.target.value)}
+            fullWidth
+            margin="normal"
+            required
+            error={!!errors.roomName}
+            helperText={errors.roomName}
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            onClick={handleCreateRoom}
+            fullWidth
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
               mt: 2,
-              width: "100%",
+              height: "56px",
+              position: "relative",
             }}
           >
-            <TextField
-              value={roomUrl}
-              InputProps={{ readOnly: true }}
-              fullWidth
-            />
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "SAVE AND CREATE"
+            )}
+          </Button>
 
-            <Button
+          {roomUrl && (
+            <Box
               sx={{
-                height: "56px",
-                width: "20%",
-              }}
-              onClick={handleCopyUrl}
-              variant="contained"
-              color="secondary"
-            >
-              <ContentCopyIcon />
-            </Button>
-          </Box>
-        )}
-
-        {roomUrl && (
-          <>
-            <Typography variant="body2" sx={{ mt: 2, color: "primary.main" }}>
-              Invite your team using this link.
-            </Typography>
-            <Button
-              variant="contained"
-              color="success"
-              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
                 mt: 2,
                 width: "100%",
-                height: "56px",
               }}
-              onClick={handleJoinRoom}
             >
-              JOIN
-            </Button>
-          </>
-        )}
-      </Box>
+              <TextField
+                value={roomUrl}
+                InputProps={{ readOnly: true }}
+                fullWidth
+              />
 
-      <Snackbar
-        open={showCopySuccess}
-        autoHideDuration={3000}
-        onClose={() => setShowCopySuccess(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert severity="success" sx={{ width: "100%" }}>
-          Link copied to clipboard!
-        </Alert>
-      </Snackbar>
-    </Box>
+              <Button
+                sx={{
+                  height: "56px",
+                  width: "20%",
+                }}
+                onClick={handleCopyUrl}
+                variant="contained"
+                color="secondary"
+              >
+                <ContentCopyIcon />
+              </Button>
+            </Box>
+          )}
+
+          {roomUrl && (
+            <>
+              <Typography variant="body2" sx={{ mt: 2, color: "primary.main" }}>
+                Invite your team using this link.
+              </Typography>
+              <Button
+                variant="contained"
+                color="success"
+                sx={{
+                  mt: 2,
+                  width: "100%",
+                  height: "56px",
+                }}
+                onClick={handleJoinRoom}
+              >
+                JOIN
+              </Button>
+            </>
+          )}
+        </Box>
+
+        <Snackbar
+          open={showCopySuccess}
+          autoHideDuration={3000}
+          onClose={() => setShowCopySuccess(false)}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert severity="success" sx={{ width: "100%" }}>
+            Link copied to clipboard!
+          </Alert>
+        </Snackbar>
+      </Box>
+    </ThemeProvider>
   );
 };
 

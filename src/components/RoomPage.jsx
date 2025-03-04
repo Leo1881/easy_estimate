@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -34,24 +34,27 @@ const RoomPage = () => {
   const [displayRoomName, setDisplayRoomName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Update loadUsers function to normalize room name
-  const loadUsers = () => {
+  // Wrap loadUsers in useCallback
+  const loadUsers = useCallback(() => {
     const normalizedRoomName = roomNameParam.toLowerCase();
     const storedUsers = JSON.parse(
       localStorage.getItem(`roomUsers_${normalizedRoomName}`) || "[]"
     );
     setUsers(storedUsers);
-  };
+  }, [roomNameParam]);
 
-  // Update notifyUserUpdate function
-  const notifyUserUpdate = (updatedUsers) => {
-    const normalizedRoomName = roomNameParam.toLowerCase();
-    localStorage.setItem(
-      `roomUsers_${normalizedRoomName}`,
-      JSON.stringify(updatedUsers)
-    );
-    setUsers(updatedUsers);
-  };
+  // Wrap notifyUserUpdate in useCallback
+  const notifyUserUpdate = useCallback(
+    (updatedUsers) => {
+      const normalizedRoomName = roomNameParam.toLowerCase();
+      localStorage.setItem(
+        `roomUsers_${normalizedRoomName}`,
+        JSON.stringify(updatedUsers)
+      );
+      setUsers(updatedUsers);
+    },
+    [roomNameParam]
+  );
 
   // Update the periodic refresh effect
   useEffect(() => {
@@ -62,7 +65,7 @@ const RoomPage = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [roomNameParam]);
+  }, [loadUsers]);
 
   // Update room access check effect
   useEffect(() => {
@@ -80,7 +83,7 @@ const RoomPage = () => {
       localStorage.getItem(`roomUsers_${normalizedRoomName}`) || "[]"
     );
 
-    // Set creator status based on roomAdmin, not on user presence
+    // Set creator status based on roomAdmin
     const creatorStatus = roomAdmin === userName;
     setIsCreator(creatorStatus);
 
@@ -131,7 +134,7 @@ const RoomPage = () => {
       const invitePath = currentPath.replace("/room/", "/invite/");
       navigate(invitePath);
     }
-  }, [navigate, searchParams, roomNameParam, creatorName]);
+  }, [navigate, searchParams, roomNameParam, creatorName, notifyUserUpdate]);
 
   // Set estimation type from localStorage
   useEffect(() => {
@@ -174,27 +177,24 @@ const RoomPage = () => {
     ]);
   }, []);
 
-  // Add this effect after your other useEffect hooks
   useEffect(() => {
-    // Load selected ticket from localStorage on component mount
     const storedTicket = localStorage.getItem("selectedTicket");
     if (storedTicket) {
       dispatch(setSelectedTicket(JSON.parse(storedTicket)));
     }
   }, [dispatch]);
 
-  const handleTicketSelect = (ticket) => {
-    if (isCreator) {
-      console.log("Admin selecting ticket:", ticket);
-      // Store the selected ticket in localStorage as well
-      localStorage.setItem("selectedTicket", JSON.stringify(ticket));
-      dispatch(setSelectedTicket(ticket));
-    }
-  };
+  const handleTicketSelect = useCallback(
+    (ticket) => {
+      if (isCreator) {
+        localStorage.setItem("selectedTicket", JSON.stringify(ticket));
+        dispatch(setSelectedTicket(ticket));
+      }
+    },
+    [isCreator, dispatch]
+  );
 
-  console.log("Current selected ticket in RoomPage:", selectedTicket);
-
-  const handleClearEstimation = () => {
+  const handleClearEstimation = useCallback(() => {
     if (selectedTicket) {
       const updatedEstimations = { ...ticketEstimations };
       delete updatedEstimations[selectedTicket.id];
@@ -210,11 +210,10 @@ const RoomPage = () => {
 
       setFinalEstimation("");
     }
-  };
+  }, [selectedTicket, ticketEstimations]);
 
-  const handleSaveEstimation = () => {
+  const handleSaveEstimation = useCallback(() => {
     if (selectedTicket) {
-      // Create the updated ticket with final estimation and user estimations
       const updatedTicket = {
         ...selectedTicket,
         finalEstimation: finalEstimation,
@@ -227,13 +226,9 @@ const RoomPage = () => {
         ),
       };
 
-      // Update the ticket in localStorage
       localStorage.setItem("selectedTicket", JSON.stringify(updatedTicket));
-
-      // Update the ticket in Redux state
       dispatch(setSelectedTicket(updatedTicket));
 
-      // Update the ticket in jiraTickets state
       setJiraTickets((prevTickets) =>
         prevTickets.map((ticket) =>
           ticket.id === selectedTicket.id ? updatedTicket : ticket
@@ -242,29 +237,28 @@ const RoomPage = () => {
 
       setFinalEstimation("");
     }
-  };
+  }, [selectedTicket, finalEstimation, users, dispatch]);
+
+  useEffect(() => {}, [jiraTickets]);
+
+  useEffect(() => {}, [selectedTicket]);
 
   const estimationOptions =
     estimationType === "Fibonacci"
       ? [1, 2, 3, 5, 8, 13, 21]
       : ["XS", "S", "M", "L", "XL"];
 
-  // Define the onUpdateUsers function
-  const onUpdateUsers = (updatedUsers) => {
-    setUsers(updatedUsers);
-    const normalizedRoomName = roomNameParam.toLowerCase();
-    localStorage.setItem(
-      `roomUsers_${normalizedRoomName}`,
-      JSON.stringify(updatedUsers)
-    );
-  };
-
-  console.log("RoomPage Render State:", {
-    isCreator,
-    isLoading,
-    userCount: users.length,
-    currentPath: window.location.pathname,
-  });
+  const onUpdateUsers = useCallback(
+    (updatedUsers) => {
+      setUsers(updatedUsers);
+      const normalizedRoomName = roomNameParam.toLowerCase();
+      localStorage.setItem(
+        `roomUsers_${normalizedRoomName}`,
+        JSON.stringify(updatedUsers)
+      );
+    },
+    [roomNameParam]
+  );
 
   return (
     <ThemeProvider theme={theme}>

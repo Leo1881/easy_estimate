@@ -6,69 +6,49 @@ import { useSelector } from "react-redux";
 
 const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
   const [selectedEstimation, setSelectedEstimation] = useState(null);
-  const [localSelectedTicket, setLocalSelectedTicket] = useState(null);
   const [localUserEstimations, setLocalUserEstimations] = useState({});
   const selectedTicket = useSelector((state) => state.selectedTicket);
 
-  // Add polling effect to check for ticket updates
+  // Effect to handle ticket updates
   useEffect(() => {
-    const checkForTicketUpdates = () => {
-      // Check both localStorage and Redux store
-      const storedTicket = localStorage.getItem("selectedTicket");
-      const ticketToUse = storedTicket
-        ? JSON.parse(storedTicket)
-        : selectedTicket;
-
-      if (
-        ticketToUse &&
-        JSON.stringify(ticketToUse) !== JSON.stringify(localSelectedTicket)
-      ) {
-        console.log("Ticket updated:", ticketToUse);
-        setLocalSelectedTicket(ticketToUse);
-
-        // If there are saved user estimations for this ticket, load them
-        if (ticketToUse.userEstimations) {
-          setLocalUserEstimations(ticketToUse.userEstimations);
-          // Set the current user's estimation if it exists
-          const currentUserName = localStorage.getItem("userName");
-          if (ticketToUse.userEstimations[currentUserName]) {
-            setSelectedEstimation(ticketToUse.userEstimations[currentUserName]);
-          }
-        } else {
-          setLocalUserEstimations({});
-          setSelectedEstimation(null);
+    if (selectedTicket) {
+      if (selectedTicket.userEstimations) {
+        setLocalUserEstimations(selectedTicket.userEstimations);
+        const currentUserName = localStorage.getItem("userName");
+        if (selectedTicket.userEstimations[currentUserName]) {
+          setSelectedEstimation(
+            selectedTicket.userEstimations[currentUserName]
+          );
         }
       }
-    };
+    }
+  }, [selectedTicket]);
 
-    // Initial check
-    checkForTicketUpdates();
-
-    // Set up polling interval
-    const interval = setInterval(checkForTicketUpdates, 1000);
-
-    // Cleanup
-    return () => clearInterval(interval);
-  }, [localSelectedTicket, selectedTicket]);
-
-  // Add effect to log state changes
+  // Add effect to track state changes
   useEffect(() => {
-    console.log("UserView State Update:", {
-      localSelectedTicket,
-      selectedTicket,
-      finalEstimation: localSelectedTicket?.finalEstimation,
-      userEstimations: localUserEstimations,
-    });
-  }, [localSelectedTicket, selectedTicket, localUserEstimations]);
+    console.log("📊 UserView - State Update");
+    console.log("Selected Estimation:", selectedEstimation);
+    console.log("Local User Estimations:", localUserEstimations);
+  }, [selectedEstimation, localUserEstimations]);
 
   const handleEstimationSelect = (value) => {
-    // Only allow estimation if the ticket doesn't have a final estimation
-    if (!localSelectedTicket?.finalEstimation) {
-      setSelectedEstimation(value === selectedEstimation ? null : value);
+    console.log("🎯 UserView - Estimation Selected:", value);
+    console.log("Current selectedTicket:", selectedTicket);
+
+    if (!selectedTicket?.finalEstimation) {
+      const newEstimation = value === selectedEstimation ? null : value;
+      console.log("Setting new estimation:", newEstimation);
+      setSelectedEstimation(newEstimation);
+
       const currentUserName = localStorage.getItem("userName");
+      console.log("Current user:", currentUserName);
+
       const updatedUsers = users.map((user) =>
-        user.name === currentUserName ? { ...user, estimation: value } : user
+        user.name === currentUserName
+          ? { ...user, estimation: newEstimation }
+          : user
       );
+      console.log("Updated users:", updatedUsers);
       onUpdateUsers(updatedUsers);
     }
   };
@@ -76,6 +56,9 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
   // Get the current user's name and their estimation for this ticket
   const currentUserName = localStorage.getItem("userName");
   const currentUserEstimation = localUserEstimations[currentUserName];
+
+  console.log("Current user name:", currentUserName);
+  console.log("Current user estimation:", currentUserEstimation);
 
   return (
     <Box
@@ -100,10 +83,7 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
               }}
             >
               <CardContent>
-                <JiraTicketList
-                  tickets={tickets}
-                  onSelect={() => {}} // Empty function since users can't select tickets
-                />
+                <JiraTicketList tickets={tickets} onSelect={() => {}} />
               </CardContent>
             </Card>
           </Grid>
@@ -129,7 +109,7 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                 >
                   JIRA Ticket Details
                 </Typography>
-                {localSelectedTicket && (
+                {selectedTicket && (
                   <>
                     <Box sx={{ mb: 3 }}>
                       <Box sx={{ width: "100%" }}>
@@ -142,7 +122,7 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                             ID
                           </Typography>
                           <Typography variant="body2">
-                            {localSelectedTicket.id}
+                            {selectedTicket.id}
                           </Typography>
                         </Box>
                         <Box sx={{ mb: 2 }}>
@@ -154,7 +134,7 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                             Ticket Name
                           </Typography>
                           <Typography variant="h6">
-                            {localSelectedTicket.title}
+                            {selectedTicket.title}
                           </Typography>
                         </Box>
                         <Box sx={{ mb: 2 }}>
@@ -166,8 +146,7 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                             Summary
                           </Typography>
                           <Typography variant="body1">
-                            {localSelectedTicket.summary ||
-                              "No summary provided"}
+                            {selectedTicket.summary || "No summary provided"}
                           </Typography>
                         </Box>
                         <Box sx={{ mb: 2 }}>
@@ -179,7 +158,7 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                             Description
                           </Typography>
                           <Typography variant="body1">
-                            {localSelectedTicket.description}
+                            {selectedTicket.description}
                           </Typography>
                         </Box>
                         <Box sx={{ mb: 2 }}>
@@ -191,7 +170,7 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                             Details
                           </Typography>
                           <Typography variant="body1">
-                            {localSelectedTicket.details ||
+                            {selectedTicket.details ||
                               "No additional details available"}
                           </Typography>
                         </Box>
@@ -199,7 +178,7 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                     </Box>
 
                     {/* Show final estimation if it exists */}
-                    {localSelectedTicket.finalEstimation && (
+                    {selectedTicket.finalEstimation && (
                       <Box
                         sx={{
                           mb: 2,
@@ -210,8 +189,10 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                         }}
                       >
                         <Typography variant="h6">
-                          Final Estimation:{" "}
-                          {localSelectedTicket.finalEstimation}
+                          Final Estimation: {selectedTicket.finalEstimation}
+                        </Typography>
+                        <Typography variant="body2">
+                          Admin's final decision
                         </Typography>
                       </Box>
                     )}
@@ -248,26 +229,25 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                                   flexDirection: "column",
                                   alignItems: "center",
                                   justifyContent: "center",
-                                  cursor: localSelectedTicket.finalEstimation
+                                  cursor: selectedTicket.finalEstimation
                                     ? "not-allowed"
                                     : "pointer",
                                   transition: "all 0.2s ease-in-out",
-                                  bgcolor: localSelectedTicket.finalEstimation
+                                  bgcolor: selectedTicket.finalEstimation
                                     ? "action.disabledBackground"
                                     : selectedEstimation === value
                                     ? "primary.light"
                                     : "background.default",
-                                  color: localSelectedTicket.finalEstimation
+                                  color: selectedTicket.finalEstimation
                                     ? "action.disabled"
                                     : selectedEstimation === value
                                     ? "primary.contrastText"
                                     : "text.primary",
                                   "&:hover": {
-                                    transform:
-                                      localSelectedTicket.finalEstimation
-                                        ? "none"
-                                        : "translateY(-5px)",
-                                    bgcolor: localSelectedTicket.finalEstimation
+                                    transform: selectedTicket.finalEstimation
+                                      ? "none"
+                                      : "translateY(-5px)",
+                                    bgcolor: selectedTicket.finalEstimation
                                       ? "action.disabledBackground"
                                       : selectedEstimation === value
                                       ? "primary.light"
@@ -283,7 +263,7 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                                 >
                                   {value}
                                 </Typography>
-                                {localSelectedTicket.finalEstimation &&
+                                {selectedTicket.finalEstimation &&
                                   currentUserEstimation === value && (
                                     <Typography
                                       variant="caption"
@@ -306,26 +286,25 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                                   flexDirection: "column",
                                   alignItems: "center",
                                   justifyContent: "center",
-                                  cursor: localSelectedTicket.finalEstimation
+                                  cursor: selectedTicket.finalEstimation
                                     ? "not-allowed"
                                     : "pointer",
                                   transition: "all 0.2s ease-in-out",
-                                  bgcolor: localSelectedTicket.finalEstimation
+                                  bgcolor: selectedTicket.finalEstimation
                                     ? "action.disabledBackground"
                                     : selectedEstimation === value
                                     ? "primary.light"
                                     : "background.default",
-                                  color: localSelectedTicket.finalEstimation
+                                  color: selectedTicket.finalEstimation
                                     ? "action.disabled"
                                     : selectedEstimation === value
                                     ? "primary.contrastText"
                                     : "text.primary",
                                   "&:hover": {
-                                    transform:
-                                      localSelectedTicket.finalEstimation
-                                        ? "none"
-                                        : "translateY(-5px)",
-                                    bgcolor: localSelectedTicket.finalEstimation
+                                    transform: selectedTicket.finalEstimation
+                                      ? "none"
+                                      : "translateY(-5px)",
+                                    bgcolor: selectedTicket.finalEstimation
                                       ? "action.disabledBackground"
                                       : selectedEstimation === value
                                       ? "primary.light"
@@ -341,7 +320,7 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
                                 >
                                   {value}
                                 </Typography>
-                                {localSelectedTicket.finalEstimation &&
+                                {selectedTicket.finalEstimation &&
                                   currentUserEstimation === value && (
                                     <Typography
                                       variant="caption"

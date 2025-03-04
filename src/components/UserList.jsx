@@ -9,7 +9,7 @@ import {
   Badge,
   Avatar,
 } from "@mui/material";
-import PersonIcon from "@mui/icons-material/Person"; // Add this import
+import PersonIcon from "@mui/icons-material/Person";
 
 const UserList = ({ users }) => {
   return (
