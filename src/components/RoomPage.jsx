@@ -22,7 +22,6 @@ const RoomPage = () => {
   const { roomName: roomNameParam, creatorName } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
   const [jiraTickets, setJiraTickets] = useState([]);
   const [users, setUsers] = useState([]);
   const selectedTicket = useSelector((state) => state.selectedTicket);
@@ -281,23 +280,44 @@ const RoomPage = () => {
             <Box
               sx={{
                 flexGrow: 1,
-                height: "calc(100vh - 100px)",
+                height: "calc(100vh - 160px)",
                 width: "95%",
                 mx: "auto",
                 "& *": { transition: "none !important" },
+                display: "flex",
               }}
             >
-              <Grid container spacing={2} sx={{ height: "100%" }}>
-                <Grid item xs={3}>
+              <Grid
+                container
+                spacing={2}
+                sx={{
+                  height: "100%",
+                }}
+              >
+                {/* Left panel - Jira Tickets */}
+                <Grid item xs={3} sx={{ height: "100%" }}>
                   <Card
                     sx={{
                       height: "100%",
-                      overflowY: "auto",
+                      display: "flex",
+                      flexDirection: "column",
                       bgcolor: "background.paper",
                       boxShadow: 3,
                     }}
                   >
-                    <CardContent>
+                    <Typography variant="h6" sx={{ p: 2, pb: 1 }}>
+                      Tickets
+                    </Typography>
+                    <CardContent
+                      sx={{
+                        flex: 1,
+                        pt: 0,
+                        px: 2,
+                        pb: 2,
+                        overflowY: "auto",
+                        "&:last-child": { pb: 2 },
+                      }}
+                    >
                       <JiraTicketList
                         tickets={jiraTickets}
                         onSelect={handleTicketSelect}
@@ -305,26 +325,31 @@ const RoomPage = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={6}>
+
+                {/* Middle panel - Ticket Details */}
+                <Grid item xs={6} sx={{ height: "100%" }}>
                   <Card
                     sx={{
-                      height: "95.8%",
-                      padding: 2,
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
                       bgcolor: "background.paper",
                       boxShadow: 3,
                     }}
                   >
-                    <CardContent>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          marginBottom: 2,
-                          color: "primary.main",
-                          fontWeight: 500,
-                        }}
-                      >
-                        JIRA Ticket Details
-                      </Typography>
+                    <Typography variant="h6" sx={{ p: 2, pb: 1 }}>
+                      Ticket Details
+                    </Typography>
+                    <CardContent
+                      sx={{
+                        flex: 1,
+                        pt: 0,
+                        px: 2,
+                        pb: 2,
+                        overflowY: "auto",
+                        "&:last-child": { pb: 2 },
+                      }}
+                    >
                       {selectedTicket && (
                         <>
                           <Box sx={{ mb: 3 }}>
@@ -443,16 +468,30 @@ const RoomPage = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={3}>
+
+                <Grid item xs={3} sx={{ height: "100%" }}>
                   <Card
                     sx={{
                       height: "100%",
-                      overflowY: "auto",
+                      display: "flex",
+                      flexDirection: "column",
                       bgcolor: "background.paper",
                       boxShadow: 3,
                     }}
                   >
-                    <CardContent>
+                    <Typography variant="h6" sx={{ p: 2, pb: 1 }}>
+                      Users
+                    </Typography>
+                    <CardContent
+                      sx={{
+                        flex: 1,
+                        pt: 0,
+                        px: 2,
+                        pb: 2,
+                        overflowY: "auto",
+                        "&:last-child": { pb: 2 },
+                      }}
+                    >
                       <UserList users={users} isCreator={isCreator} />
                     </CardContent>
                   </Card>

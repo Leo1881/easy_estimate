@@ -64,298 +64,329 @@ const UserView = ({ tickets, users, estimationType, onUpdateUsers }) => {
     <Box
       sx={{
         flexGrow: 1,
-        height: "calc(100vh - 100px)",
+        height: "calc(100vh - 160px)", // Updated to match Admin view
         width: "95%",
         mx: "auto",
         "& *": { transition: "none !important" },
+        display: "flex",
       }}
     >
-      <Box sx={{ height: "100%" }}>
-        <Grid container spacing={2} sx={{ height: "100%" }}>
-          {/* Left panel - Ticket List */}
-          <Grid item xs={3}>
-            <Card
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          height: "100%",
+        }}
+      >
+        {/* Left panel - Ticket List */}
+        <Grid item xs={3} sx={{ height: "100%" }}>
+          <Card
+            sx={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              bgcolor: "background.paper",
+              boxShadow: 3,
+            }}
+          >
+            <Typography variant="h6" sx={{ p: 2, pb: 1 }}>
+              Tickets
+            </Typography>
+            <CardContent
               sx={{
-                height: "100%",
+                flex: 1,
+                pt: 0,
+                px: 2,
+                pb: 2,
                 overflowY: "auto",
-                bgcolor: "background.paper",
-                boxShadow: 3,
+                "&:last-child": { pb: 2 },
               }}
             >
-              <CardContent>
-                <JiraTicketList tickets={tickets} onSelect={() => {}} />
-              </CardContent>
-            </Card>
-          </Grid>
+              <JiraTicketList tickets={tickets} onSelect={() => {}} />
+            </CardContent>
+          </Card>
+        </Grid>
 
-          {/* Middle panel - Ticket Details */}
-          <Grid item xs={6}>
-            <Card
+        {/* Middle panel - Ticket Details */}
+        <Grid item xs={6} sx={{ height: "100%" }}>
+          <Card
+            sx={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              bgcolor: "background.paper",
+              boxShadow: 3,
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ p: 2, pb: 1, color: "primary.main" }}
+            >
+              JIRA Ticket Details
+            </Typography>
+            <CardContent
               sx={{
-                height: "95.8%",
-                padding: 2,
-                bgcolor: "background.paper",
-                boxShadow: 3,
+                flex: 1,
+                pt: 0,
+                px: 2,
+                pb: 2,
+                overflowY: "auto",
+                "&:last-child": { pb: 2 },
               }}
             >
-              <CardContent>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    marginBottom: 2,
-                    color: "primary.main",
-                    fontWeight: 500,
-                  }}
-                >
-                  JIRA Ticket Details
-                </Typography>
-                {selectedTicket && (
-                  <>
-                    <Box sx={{ mb: 3 }}>
-                      <Box sx={{ width: "100%" }}>
-                        <Box sx={{ mb: 2 }}>
-                          <Typography
-                            variant="caption"
-                            color="textSecondary"
-                            sx={{ display: "block", mb: 0.5 }}
-                          >
-                            ID
-                          </Typography>
-                          <Typography variant="body2">
-                            {selectedTicket.id}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                          <Typography
-                            variant="caption"
-                            color="textSecondary"
-                            sx={{ display: "block", mb: 0.5 }}
-                          >
-                            Ticket Name
-                          </Typography>
-                          <Typography variant="h6">
-                            {selectedTicket.title}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                          <Typography
-                            variant="caption"
-                            color="textSecondary"
-                            sx={{ display: "block", mb: 0.5 }}
-                          >
-                            Summary
-                          </Typography>
-                          <Typography variant="body1">
-                            {selectedTicket.summary || "No summary provided"}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                          <Typography
-                            variant="caption"
-                            color="textSecondary"
-                            sx={{ display: "block", mb: 0.5 }}
-                          >
-                            Description
-                          </Typography>
-                          <Typography variant="body1">
-                            {selectedTicket.description}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                          <Typography
-                            variant="caption"
-                            color="textSecondary"
-                            sx={{ display: "block", mb: 0.5 }}
-                          >
-                            Details
-                          </Typography>
-                          <Typography variant="body1">
-                            {selectedTicket.details ||
-                              "No additional details available"}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Box>
-
-                    {/* Show final estimation if it exists */}
-                    {selectedTicket.finalEstimation && (
-                      <Box
-                        sx={{
-                          mb: 2,
-                          p: 2,
-                          bgcolor: "primary.main",
-                          color: "primary.contrastText",
-                          borderRadius: 1,
-                        }}
-                      >
-                        <Typography variant="h6">
-                          Final Estimation: {selectedTicket.finalEstimation}
+              {selectedTicket && (
+                <>
+                  <Box sx={{ mb: 3 }}>
+                    <Box sx={{ width: "100%" }}>
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          variant="caption"
+                          color="textSecondary"
+                          sx={{ display: "block", mb: 0.5 }}
+                        >
+                          ID
                         </Typography>
                         <Typography variant="body2">
-                          Admin's final decision
+                          {selectedTicket.id}
                         </Typography>
                       </Box>
-                    )}
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          variant="caption"
+                          color="textSecondary"
+                          sx={{ display: "block", mb: 0.5 }}
+                        >
+                          Ticket Name
+                        </Typography>
+                        <Typography variant="h6">
+                          {selectedTicket.title}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          variant="caption"
+                          color="textSecondary"
+                          sx={{ display: "block", mb: 0.5 }}
+                        >
+                          Summary
+                        </Typography>
+                        <Typography variant="body1">
+                          {selectedTicket.summary || "No summary provided"}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          variant="caption"
+                          color="textSecondary"
+                          sx={{ display: "block", mb: 0.5 }}
+                        >
+                          Description
+                        </Typography>
+                        <Typography variant="body1">
+                          {selectedTicket.description}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          variant="caption"
+                          color="textSecondary"
+                          sx={{ display: "block", mb: 0.5 }}
+                        >
+                          Details
+                        </Typography>
+                        <Typography variant="body1">
+                          {selectedTicket.details ||
+                            "No additional details available"}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
 
-                    {/* Estimation Cards */}
+                  {/* Show final estimation if it exists */}
+                  {selectedTicket.finalEstimation && (
+                    <Box
+                      sx={{
+                        mb: 2,
+                        p: 2,
+                        bgcolor: "primary.main",
+                        color: "primary.contrastText",
+                        borderRadius: 1,
+                      }}
+                    >
+                      <Typography variant="h6">
+                        Final Estimation: {selectedTicket.finalEstimation}
+                      </Typography>
+                      <Typography variant="body2">
+                        Admin's final decision
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {/* Estimation Cards */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 2,
+                      mt: 2,
+                    }}
+                  >
                     <Box
                       sx={{
                         display: "flex",
-                        alignItems: "center",
-                        mb: 2,
-                        mt: 2,
+                        gap: 2,
+                        overflowX: "auto",
+                        pb: 2,
+                        width: "100%",
+                        justifyContent: "space-between",
                       }}
                     >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: 2,
-                          overflowX: "auto",
-                          pb: 2,
-                          width: "100%",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        {estimationType === "Fibonacci"
-                          ? [1, 2, 3, 5, 8, 13, 21].map((value) => (
-                              <Paper
-                                key={value}
-                                elevation={selectedEstimation === value ? 8 : 2}
-                                sx={{
-                                  flex: 1,
-                                  minWidth: 60,
-                                  height: 90,
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  cursor: selectedTicket.finalEstimation
-                                    ? "not-allowed"
-                                    : "pointer",
-                                  transition: "all 0.2s ease-in-out",
+                      {estimationType === "Fibonacci"
+                        ? [1, 2, 3, 5, 8, 13, 21].map((value) => (
+                            <Paper
+                              key={value}
+                              elevation={selectedEstimation === value ? 8 : 2}
+                              sx={{
+                                flex: 1,
+                                minWidth: 60,
+                                height: 120,
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: selectedTicket.finalEstimation
+                                  ? "not-allowed"
+                                  : "pointer",
+                                transition: "all 0.2s ease-in-out",
+                                bgcolor: selectedTicket.finalEstimation
+                                  ? "action.disabledBackground"
+                                  : selectedEstimation === value
+                                  ? "primary.light"
+                                  : "background.default",
+                                color: selectedTicket.finalEstimation
+                                  ? "action.disabled"
+                                  : selectedEstimation === value
+                                  ? "primary.contrastText"
+                                  : "text.primary",
+                                "&:hover": {
+                                  transform: selectedTicket.finalEstimation
+                                    ? "none"
+                                    : "translateY(-5px)",
                                   bgcolor: selectedTicket.finalEstimation
                                     ? "action.disabledBackground"
                                     : selectedEstimation === value
                                     ? "primary.light"
-                                    : "background.default",
-                                  color: selectedTicket.finalEstimation
-                                    ? "action.disabled"
-                                    : selectedEstimation === value
-                                    ? "primary.contrastText"
-                                    : "text.primary",
-                                  "&:hover": {
-                                    transform: selectedTicket.finalEstimation
-                                      ? "none"
-                                      : "translateY(-5px)",
-                                    bgcolor: selectedTicket.finalEstimation
-                                      ? "action.disabledBackground"
-                                      : selectedEstimation === value
-                                      ? "primary.light"
-                                      : "action.hover",
-                                  },
-                                }}
-                                onClick={() => handleEstimationSelect(value)}
+                                    : "action.hover",
+                                },
+                              }}
+                              onClick={() => handleEstimationSelect(value)}
+                            >
+                              <Typography
+                                variant="h5"
+                                component="div"
+                                sx={{ fontWeight: "bold" }}
                               >
-                                <Typography
-                                  variant="h5"
-                                  component="div"
-                                  sx={{ fontWeight: "bold" }}
-                                >
-                                  {value}
-                                </Typography>
-                                {selectedTicket.finalEstimation &&
-                                  currentUserEstimation === value && (
-                                    <Typography
-                                      variant="caption"
-                                      color="primary"
-                                    >
-                                      Your estimate
-                                    </Typography>
-                                  )}
-                              </Paper>
-                            ))
-                          : ["XS", "S", "M", "L", "XL"].map((value) => (
-                              <Paper
-                                key={value}
-                                elevation={selectedEstimation === value ? 8 : 2}
-                                sx={{
-                                  flex: 1,
-                                  minWidth: 60,
-                                  height: 90,
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  cursor: selectedTicket.finalEstimation
-                                    ? "not-allowed"
-                                    : "pointer",
-                                  transition: "all 0.2s ease-in-out",
+                                {value}
+                              </Typography>
+                              {selectedTicket.finalEstimation &&
+                                currentUserEstimation === value && (
+                                  <Typography variant="caption" color="primary">
+                                    Your estimate
+                                  </Typography>
+                                )}
+                            </Paper>
+                          ))
+                        : ["XS", "S", "M", "L", "XL"].map((value) => (
+                            <Paper
+                              key={value}
+                              elevation={selectedEstimation === value ? 8 : 2}
+                              sx={{
+                                flex: 1,
+                                minWidth: 60,
+                                height: 120,
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: selectedTicket.finalEstimation
+                                  ? "not-allowed"
+                                  : "pointer",
+                                transition: "all 0.2s ease-in-out",
+                                bgcolor: selectedTicket.finalEstimation
+                                  ? "action.disabledBackground"
+                                  : selectedEstimation === value
+                                  ? "primary.light"
+                                  : "background.default",
+                                color: selectedTicket.finalEstimation
+                                  ? "action.disabled"
+                                  : selectedEstimation === value
+                                  ? "primary.contrastText"
+                                  : "text.primary",
+                                "&:hover": {
+                                  transform: selectedTicket.finalEstimation
+                                    ? "none"
+                                    : "translateY(-5px)",
                                   bgcolor: selectedTicket.finalEstimation
                                     ? "action.disabledBackground"
                                     : selectedEstimation === value
                                     ? "primary.light"
-                                    : "background.default",
-                                  color: selectedTicket.finalEstimation
-                                    ? "action.disabled"
-                                    : selectedEstimation === value
-                                    ? "primary.contrastText"
-                                    : "text.primary",
-                                  "&:hover": {
-                                    transform: selectedTicket.finalEstimation
-                                      ? "none"
-                                      : "translateY(-5px)",
-                                    bgcolor: selectedTicket.finalEstimation
-                                      ? "action.disabledBackground"
-                                      : selectedEstimation === value
-                                      ? "primary.light"
-                                      : "action.hover",
-                                  },
-                                }}
-                                onClick={() => handleEstimationSelect(value)}
+                                    : "action.hover",
+                                },
+                              }}
+                              onClick={() => handleEstimationSelect(value)}
+                            >
+                              <Typography
+                                variant="h5"
+                                component="div"
+                                sx={{ fontWeight: "bold" }}
                               >
-                                <Typography
-                                  variant="h5"
-                                  component="div"
-                                  sx={{ fontWeight: "bold" }}
-                                >
-                                  {value}
-                                </Typography>
-                                {selectedTicket.finalEstimation &&
-                                  currentUserEstimation === value && (
-                                    <Typography
-                                      variant="caption"
-                                      color="primary"
-                                    >
-                                      Your estimate
-                                    </Typography>
-                                  )}
-                              </Paper>
-                            ))}
-                      </Box>
+                                {value}
+                              </Typography>
+                              {selectedTicket.finalEstimation &&
+                                currentUserEstimation === value && (
+                                  <Typography variant="caption" color="primary">
+                                    Your estimate
+                                  </Typography>
+                                )}
+                            </Paper>
+                          ))}
                     </Box>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
+                  </Box>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
 
-          {/* Right panel - User List */}
-          <Grid item xs={3}>
-            <Card
+        {/* Right panel - User List */}
+        <Grid item xs={3} sx={{ height: "100%" }}>
+          <Card
+            sx={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              bgcolor: "background.paper",
+              boxShadow: 3,
+            }}
+          >
+            <Typography variant="h6" sx={{ p: 2, pb: 1 }}>
+              Users
+            </Typography>
+            <CardContent
               sx={{
-                height: "100%",
+                flex: 1,
+                pt: 0,
+                px: 2,
+                pb: 2,
                 overflowY: "auto",
-                bgcolor: "background.paper",
-                boxShadow: 3,
+                "&:last-child": { pb: 2 },
               }}
             >
-              <CardContent>
-                <UserList users={users} />
-              </CardContent>
-            </Card>
-          </Grid>
+              <UserList users={users} />
+            </CardContent>
+          </Card>
         </Grid>
-      </Box>
+      </Grid>
     </Box>
   );
 };
